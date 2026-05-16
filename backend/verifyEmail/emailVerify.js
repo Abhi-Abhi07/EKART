@@ -11,17 +11,14 @@ export const verifyEmail = (token,email)=>{
     // });
 const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // true for port 465
-        // Force Node to prioritize IPv4 over IPv6
-        connectionTimeout: 10000, // 10 seconds timeout
-        greetingTimeout: 10000,
+        port: 587,
+        secure: false, // false for port 587 (uses STARTTLS)
         auth: {
             user: process.env.USER_MAIL,
             pass: process.env.USER_PASS,
         },
-        // This forces standard IPv4 network resolution
         tls: {
+            ciphers: 'SSLv3',
             rejectUnauthorized: false
         }
     });
