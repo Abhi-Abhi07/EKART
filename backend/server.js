@@ -17,6 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
+app.set('trust proxy', 1);
 
 // middleware
 app.use(express.json());
