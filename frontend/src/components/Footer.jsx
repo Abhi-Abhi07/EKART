@@ -19,21 +19,21 @@ function Footer() {
             <div className='mb-6 md:mb-0'>
                 <h3 className='text-xl font-semibold'>Customer Service</h3>
                 <ul className='mt-2 text-sm space-y-2'>
-                    <li><a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Contact Us</a></li>
-                    <li><a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Shipping & Returns</a></li>
-                    <li><a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">FAQs</a></li>
-                    <li><a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Order Tracking</a></li>
-                    <li><a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Size Guide</a></li>
+                    <li><a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Contact Us</a></li>
+                    <li><a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Shipping & Returns</a></li>
+                    <li><a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">FAQs</a></li>
+                    <li><a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Order Tracking</a></li>
+                    <li><a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors">Size Guide</a></li>
                 </ul>
             </div>
             {/* Social media links */}
             <div className='mb-6 md:mb-0'>
                 <h3 className='text-xl font-semibold'>Follow Us</h3>
                 <div className='flex space-x-4 mt-2'>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaFacebook/></a>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaInstagram/></a>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaTwitterSquare/></a>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaPinterest/></a>
+                    <a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaFacebook/></a>
+                    <a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaInstagram/></a>
+                    <a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaTwitterSquare/></a>
+                    <a href="#" className="text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"><FaPinterest/></a>
                 </div>
             </div>
             {/* newsletter subscription */}
