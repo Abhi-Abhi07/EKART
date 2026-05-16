@@ -21,12 +21,31 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 // middleware
 app.use(express.json());
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-  }),
-);
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_URL || "http://localhost:5173",
+//     credentials: true,
+//   }),
+// );
+//  NEW CONFIGURATION
+const allowedOrigins = [
+  "http://localhost:5173",          // For local development
+  "https://ekart-smoky.vercel.app"  // Your production frontend
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true // Keep this true since you are using withCredentials on frontend
+}));
 app.use(
   "/api",
   rateLimit({
