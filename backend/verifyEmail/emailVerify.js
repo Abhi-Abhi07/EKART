@@ -43,21 +43,20 @@ import dns from "dns" // 💡 Import the standard dns module
 import "dotenv/config"
 
 export const verifyEmail = (token, email) => {
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,       // Stick with 465 as Render prefers SSL
-        secure: true,    // true for 465
-        auth: {
-            user: process.env.USER_MAIL,
-            pass: process.env.USER_PASS,
-        },
-        // 💡 THE ULTIMATE FIX: Force Nodemailer to look up IPv4 only
-        lookup: (hostname, options, callback) => {
-            dns.lookup(hostname, { family: 4 }, (err, address, family) => {
-                callback(err, address, family);
-            });
-        }
-    });
+const transporter = nodemailer.createTransport({
+    host: "173.194.77.108", // 💡 Direct Google SMTP IPv4 address
+    port: 465,
+    secure: true, 
+    auth: {
+        user: process.env.USER_MAIL,
+        pass: process.env.USER_PASS,
+    },
+    tls: {
+        // Tells Nodemailer to accept the "smtp.gmail.com" certificate 
+        // even though we are connecting via the raw IP address
+        rejectUnauthorized: false 
+    }
+});
 
     const frontendUrl = process.env.NODE_ENV === "production" 
         ? "https://ekart-smoky.vercel.app" 
