@@ -13,6 +13,7 @@ import { setUser } from '@/redux/userSlice'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
+import { apiClient } from "@/services/apiClient";
 
 /**
  * Admin page for viewing and updating user profile information.
@@ -59,7 +60,7 @@ function UserInfo() {
         formData.append("file", file)
       }
 
-      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update/${userId}`, formData, {
+      const res = await apiClient.put(`/api/v1/user/update/${userId}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data"
@@ -84,7 +85,7 @@ function UserInfo() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/get-user/${userId}`)
+        const res = await apiClient.get(`/api/v1/user/get-user/${userId}`)
         if (res.data.success) {
           setUpdateUser(res.data.user)
         }

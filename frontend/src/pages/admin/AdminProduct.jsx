@@ -25,7 +25,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { setProducts } from "@/redux/productSlice";
 import { toast } from "sonner";
-import axios from "axios";
 import ImageUpload from "@/components/ImageUpload";
 import {
   AlertDialog,
@@ -38,6 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { apiClient } from "@/services/apiClient";
 
 /**
  * Admin page for managing products: view, edit, delete, and search products.
@@ -95,8 +95,8 @@ function AdminProduct() {
 
     try {
       setLoading(true);
-      const res = await axios.put(
-        `${import.meta.env.VITE_URL}/api/v1/product/update/${editProduct._id}`,
+      const res = await apiClient.put(
+        `/api/v1/product/update/${editProduct._id}`,
         formData,
         {
           headers: {
@@ -125,8 +125,8 @@ function AdminProduct() {
       const remainingProducts = products.filter(
         (product) => product._id !== productId,
       );
-      const res = await axios.delete(
-        `${import.meta.env.VITE_URL}/api/v1/product/delete/${productId}`,
+      const res = await apiClient.delete(
+        `/api/v1/product/delete/${productId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

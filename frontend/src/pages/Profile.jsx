@@ -11,10 +11,10 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import userLogo from '../assets/user.png'
 import { toast } from 'sonner'
-import axios from 'axios'
 import { setUser } from '@/redux/userSlice'
 import { Loader2 } from 'lucide-react'
 import MyOrder from './MyOrder'
+import { apiClient } from '@/services/apiClient'
 
 function Profile() {
   const params = useParams()
@@ -67,7 +67,7 @@ function Profile() {
         formData.append("file", file)
       }
 
-      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update/${userId}`, formData, {
+      const res = await apiClient.put(`/api/v1/user/update/${userId}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data"

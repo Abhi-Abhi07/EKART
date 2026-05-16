@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import PageTransition from '@/components/PageTransition'
-import axios from 'axios'
 import React, { useState,useEffect } from 'react'
 import { Area, ResponsiveContainer,AreaChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
+import { apiClient } from '@/services/apiClient'
 
 /**
  * Admin dashboard displaying sales statistics and metrics.
@@ -25,7 +25,7 @@ function AdminSales() {
     try {
       setLoading(true)
       const accessToken = localStorage.getItem("accessToken")
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/orders/sales`,{
+      const res = await apiClient.get(`/api/v1/orders/sales`,{
         headers:{
           Authorization: `Bearer ${accessToken}`
         }

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { setProducts } from '@/redux/productSlice'
-import axios from 'axios'
+import { apiClient } from '@/services/apiClient'
 import { Loader2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -58,7 +58,7 @@ function AddProduct() {
 
     try {
       setLoading(true)
-      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/product/add`, formData, {
+      const res = await apiClient.post(`/api/v1/product/add`, formData, {
         headers:{
           Authorization: `Bearer ${accessToken}`
         }

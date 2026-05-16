@@ -3,12 +3,12 @@ import PageTransition from '@/components/PageTransition'
 import { Edit, Eye, Search } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import UserLogo from "../../assets/user.png"
-import axios from 'axios'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
+import { apiClient } from '@/services/apiClient'
 
 /**
  * Admin page for user management displaying all registered users with search and filter.
@@ -25,7 +25,7 @@ function AdminUsers() {
     const accessToken = localStorage.getItem("accessToken")
     try {
       setLoading(true)
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/all-user`,{
+      const res = await apiClient.get(`/api/v1/user/all-user`,{
         headers:{
           Authorization: `Bearer ${accessToken}`
         }
