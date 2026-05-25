@@ -40,12 +40,6 @@ const transporter = nodemailer.createTransport({
             ${process.env.CLIENT_URL}/verify/${token} 
             Thanks`
     };
-
-    // transporter.sendMail(mailConfigurations, function(error, info){
-    //     if (error) throw Error(error);
-    //     console.log('Email Sent Successfully');
-    //     console.log(info);
-    // });
     transporter.sendMail(mailConfigurations, function(error, info) {
         if (error) {
             // Log it safely to your Render terminal instead of throwing a fatal error
