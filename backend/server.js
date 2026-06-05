@@ -51,19 +51,23 @@ app.use(
   }),
 );
 
+app.get("/", (req, res) => {
+  res.send({
+    activeStatus: true,
+    error: false,
+  });
+});
+
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
+
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-app.get("/",(req,res)=>{
-  res.send({
-    activeStatus: true,
-    error: false,
-  })
-})
 
 app.listen(PORT, () => {
   connectDB();
