@@ -43,7 +43,7 @@ const transporter = nodemailer.createTransport({
     transporter.sendMail(mailConfigurations, function(error, info) {
         if (error) {
             // Log it safely to your Render terminal instead of throwing a fatal error
-            console.error('❌ Failed to send verification email:', error.message);
+            console.error('❌ Failed to send verification email:', message);
             return; 
         }
         console.log('✅ Email Sent Successfully');
