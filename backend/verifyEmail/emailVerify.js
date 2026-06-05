@@ -63,7 +63,7 @@ export const verifyEmail = async (token, email) => {
             `${process.env.CLIENT_URL}/verify/${token}`;
 
         const { data, error } = await resend.emails.send({
-            from: process.env.USER_MAIL,
+            from: "onboarding@resend.dev",
             to: email,
             subject: "Verify Your Email",
             html: `
