@@ -16,13 +16,6 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const requiredEnvVars = ["MONGO_URI", "SECRET_KEY"];
-const missingEnvVars = requiredEnvVars.filter((name) => !process.env[name]);
-if (missingEnvVars.length > 0) {
-  console.error("Missing required environment variables:", missingEnvVars.join(", "));
-  process.exit(1);
-}
-
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 app.set('trust proxy', 1);
 
@@ -58,16 +51,16 @@ app.use(
   }),
 );
 
-app.get("/", (req, res) => {
-  res.send({
-    activeStatus: true,
-    error: false,
-  });
-});
+// app.get("/", (req, res) => {
+//   res.send({
+//     activeStatus: true,
+//     error: false,
+//   });
+// });
 
-app.get("/favicon.ico", (req, res) => {
-  res.status(204).end();
-});
+// app.get("/favicon.ico", (req, res) => {
+//   res.status(204).end();
+// });
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
