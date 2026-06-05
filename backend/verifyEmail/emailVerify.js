@@ -2,27 +2,13 @@
 // import "dotenv/config"
 
 // export const verifyEmail = (token,email)=>{
-//     // const transporter = nodemailer.createTransport({
-//     //     service : "gmail",
-//     //     auth :{
-//     //         user : process.env.USER_MAIL,
-//     //         pass : process.env.USER_PASS,
-//     //     }
-//     // });
-// const transporter = nodemailer.createTransport({
-//         host: "smtp.gmail.com",
-//         port: 587,
-//         secure: false, // false for port 587 (uses STARTTLS)
-//         auth: {
-//             user: process.env.USER_MAIL,
-//             pass: process.env.USER_PASS,
-//         },
-//         tls: {
-//             ciphers: 'SSLv3',
-//             rejectUnauthorized: false
+//     const transporter = nodemailer.createTransport({
+//         service : "gmail",
+//         auth :{
+//             user : process.env.USER_MAIL,
+//             pass : process.env.USER_PASS,
 //         }
 //     });
-
 //     const mailConfigurations = {
 
 //         // It should be a string of sender/server email
@@ -51,58 +37,38 @@
 //     });
 // }
 
-import nodemailer from "nodemailer";
-import "dotenv/config";
 
-const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.BREVO_LOGIN,
-        pass: process.env.BREVO_SMTP_KEY,
-    },
-});
+import nodemailer from "nodemailer"
+import "dotenv/config"
 
+// 1. Added 'async' so the server waits for the email to finish sending
 export const verifyEmail = async (token, email) => {
+    
+    // 2. Optimization: Keep the transporter configuration out of the function block 
+    // if you send many emails, or keep it inside if it's low traffic.
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.USER_MAIL,
+            pass: process.env.USER_PASS, // This MUST be a 16-character Google App Password
+        }
+    });
+
+    const mailConfigurations = {
+        from: process.env.USER_MAIL,
+        to: email,
+        subject: 'Email Verification',
+        // 3. Cleaned up template literal spacing so the email text doesn't look misaligned in the inbox
+        text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${process.env.CLIENT_URL}/verify/${token}\n\nThanks!`
+    };
+
+    // 4. Wrap in a try/catch block using the modern async/await syntax
     try {
-        const verificationLink =
-            `${process.env.CLIENT_URL}/verify/${token}`;
-
-        const info = await transporter.sendMail({
-            from: "gurjarabhishek406@gmail.com", // verified sender in Brevo
-            to: email,
-            subject: "Verify Your Email",
-            html: `
-                <h2>Email Verification</h2>
-                <p>Thank you for registering.</p>
-                <p>Click the button below to verify your email:</p>
-
-                <a
-                    href="${verificationLink}"
-                    style="
-                        display:inline-block;
-                        padding:10px 20px;
-                        background:#2563eb;
-                        color:white;
-                        text-decoration:none;
-                        border-radius:5px;
-                    "
-                >
-                    Verify Email
-                </a>
-
-                <p>If you didn't create an account, you can ignore this email.</p>
-            `,
-        });
-
-        console.log("✅ Email Sent Successfully");
-        console.log(info.messageId);
-
-        return true;
-
-    } catch (err) {
-        console.error("❌ Failed to send verification email:", err);
-        return false;
+        const info = await transporter.sendMail(mailConfigurations);
+        console.log('✅ Email Sent Successfully');
+        return { success: true, info };
+    } catch (error) {
+        console.error('❌ Failed to send verification email:', error.message);
+        return { success: false, error: error.message };
     }
-};
+}
