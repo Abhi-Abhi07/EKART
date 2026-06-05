@@ -22,16 +22,10 @@ app.set('trust proxy', 1);
 // middleware
 app.use(express.json());
 app.use(helmet());
-// app.use(
-//   cors({
-//     origin: process.env.CLIENT_URL || "http://localhost:5173",
-//     credentials: true,
-//   }),
-// );
-//  NEW CONFIGURATION
+
 const allowedOrigins = [
   "http://localhost:5173",          // For local development
-  "https://ekart-smoky.vercel.app"  // Your production frontend
+  "https://ekart-smoky.vercel.app" , // Your production frontend
 ];
 
 app.use(cors({
@@ -63,6 +57,13 @@ app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+app.get("/",(req,res)=>{
+  res.send({
+    activeStatus: true,
+    error: false,
+  })
+})
 
 app.listen(PORT, () => {
   connectDB();
