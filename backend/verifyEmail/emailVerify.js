@@ -51,19 +51,26 @@
 //     });
 // }
 
-
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import "dotenv/config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.BREVO_LOGIN,
+        pass: process.env.BREVO_SMTP_KEY,
+    },
+});
 
 export const verifyEmail = async (token, email) => {
     try {
         const verificationLink =
             `${process.env.CLIENT_URL}/verify/${token}`;
 
-        const { data, error } = await resend.emails.send({
-            from: "onboarding@resend.dev",
+        const info = await transporter.sendMail({
+            from: "gurjarabhishek406@gmail.com", // verified sender in Brevo
             to: email,
             subject: "Verify Your Email",
             html: `
@@ -89,18 +96,13 @@ export const verifyEmail = async (token, email) => {
             `,
         });
 
-        if (error) {
-            console.error("❌ Failed to send verification email:", error);
-            return false;
-        }
-
         console.log("✅ Email Sent Successfully");
-        console.log(data);
+        console.log(info.messageId);
 
         return true;
 
     } catch (err) {
-        console.error("❌ Unexpected error:", err);
+        console.error("❌ Failed to send verification email:", err);
         return false;
     }
 };
