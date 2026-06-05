@@ -42,13 +42,13 @@ export const verifyEmail = async (token, email) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.USER_MAIL,
-            pass: process.env.USER_PASS, // This MUST be a 16-character Google App Password
+            user: process.env.USER_MAIL?.trim(),
+            pass: process.env.USER_PASS?.replace(/\s+/g, ""), // Remove spaces if the app password was formatted for readability
         }
     });
 
     const mailConfigurations = {
-        from: process.env.USER_MAIL,
+        from: process.env.USER_MAIL?.trim(),
         to: email,
         subject: 'Email Verification',
         text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${process.env.CLIENT_URL}/verify/${token}\n\nThanks!`
