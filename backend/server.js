@@ -16,6 +16,13 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const requiredEnvVars = ["MONGO_URI", "SECRET_KEY"];
+const missingEnvVars = requiredEnvVars.filter((name) => !process.env[name]);
+if (missingEnvVars.length > 0) {
+  console.error("Missing required environment variables:", missingEnvVars.join(", "));
+  process.exit(1);
+}
+
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 app.set('trust proxy', 1);
 
@@ -69,7 +76,16 @@ app.use("/api/v1/orders", orderRoute);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  connectDB();
-  console.log(`server running at port : ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`server running at port : ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

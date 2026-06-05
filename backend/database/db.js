@@ -5,7 +5,8 @@ const connectDB = async()=>{
         await mongoose.connect(`${process.env.MONGO_URI}/Ekart`);
         console.log("MongoDB connected successfully !");
     } catch (error) {
-        console.log(`MongoDB connection failed: ${error}`);
+        console.error(`MongoDB connection failed: ${error}`);
+        throw error;
     }
 }
 
