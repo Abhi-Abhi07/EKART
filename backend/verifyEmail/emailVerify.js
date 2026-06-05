@@ -88,16 +88,11 @@ export const verifyEmail = async (token, email) => {
         });
 
         if (error) {
-            console.error("❌ Resend Error:", error);
-            return false;
+            // Log it safely to your Render terminal instead of throwing a fatal error
+            console.error('❌ Failed to send verification email:', error.message);
+            return; 
         }
-
-        console.log("✅ Verification email sent");
-        console.log(data);
-
-        return true;
-    } catch (err) {
-        console.error("❌ Failed to send email:", err);
-        return false;
-    }
-};
+        console.log('✅ Email Sent Successfully');
+        console.log(info);
+    });
+}
