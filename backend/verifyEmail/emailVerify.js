@@ -47,7 +47,15 @@ export const verifyEmail = async (token, email) => {
         }
     });
 
-    const clientUrl = process.env.CLIENT_URL?.trim() || "http://localhost:5173";
+    const rawClientUrl = process.env.CLIENT_URL?.trim() || "http://localhost:5173";
+    let clientUrl = rawClientUrl;
+    try {
+      const parsedUrl = new URL(rawClientUrl);
+      clientUrl = parsedUrl.origin;
+    } catch (e) {
+      clientUrl = rawClientUrl.replace(/\/$/, "");
+    }
+
     const mailConfigurations = {
         from: process.env.USER_MAIL?.trim(),
         to: email,
