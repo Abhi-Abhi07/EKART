@@ -47,11 +47,12 @@ export const verifyEmail = async (token, email) => {
         }
     });
 
+    const clientUrl = process.env.CLIENT_URL?.trim() || "http://localhost:5173";
     const mailConfigurations = {
         from: process.env.USER_MAIL?.trim(),
         to: email,
         subject: 'Email Verification',
-        text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${process.env.CLIENT_URL}/verify/${token}\n\nThanks!`
+        text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${clientUrl}/verify/${token}\n\nThanks!`
     };
     try {
         const info = await transporter.sendMail(mailConfigurations);
