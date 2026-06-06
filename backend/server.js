@@ -25,7 +25,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   "http://localhost:5173",          // For local development
-  "https://ekart-smoky.vercel.app" , // for production frontend
+  "https://ekart-psi-lilac.vercel.app/" , // for production frontend
 ];
 
 app.use(cors({
