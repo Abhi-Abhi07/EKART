@@ -39,6 +39,14 @@ import "dotenv/config"
 
 export const verifyEmail = async (token, email) => {
 
+    console.log(process.env.USER_MAIL)
+    console.log(process.env.USER_MAIL?.trim())
+    console.log(process.env.USER_PASS)
+    console.log(process.env.USER_PASS?.replace(/\s+/g, ""))
+    console.log(process.env.CLIENT_URL)
+    console.log(process.env.CLIENT_URL?.trim());
+
+
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -46,7 +54,6 @@ export const verifyEmail = async (token, email) => {
             pass: process.env.USER_PASS?.replace(/\s+/g, ""), // Remove spaces if the app password was formatted for readability
         }
     });
-
     const rawClientUrl = process.env.CLIENT_URL?.trim() || "http://localhost:5173";
     let clientUrl = rawClientUrl;
     try {
