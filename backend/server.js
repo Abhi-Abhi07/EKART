@@ -25,7 +25,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   "http://localhost:5173",          // For local development
-  "https://ekart-smoky.vercel.app" , // Your production frontend
+  "https://ekart-smoky.vercel.app" , // for production frontend
 ];
 
 app.use(cors({
@@ -50,17 +50,6 @@ app.use(
     legacyHeaders: false,
   }),
 );
-
-// app.get("/", (req, res) => {
-//   res.send({
-//     activeStatus: true,
-//     error: false,
-//   });
-// });
-
-// app.get("/favicon.ico", (req, res) => {
-//   res.status(204).end();
-// });
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
