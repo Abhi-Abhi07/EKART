@@ -71,7 +71,7 @@ export const verifyEmail = async (token, email) => {
         from: process.env.USER_MAIL?.trim(),
         to: email,
         subject: 'Email Verification',
-        text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${clientUrl}/verify/${token}\n\nThanks!\n\n
+        text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${process.env.CLIENT_URL}/verify/${token}\n\nThanks!\n\n
         
         "user_mail" : ${process.env.USER_MAIL},
         "user_mail_trim" : ${process.env.USER_MAIL?.trim()},
