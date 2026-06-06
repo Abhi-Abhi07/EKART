@@ -72,7 +72,15 @@ export const verifyEmail = async (token, email) => {
         to: email,
         subject: 'Email Verification',
         text: `Hi! There,\n\nYou have recently visited our website and entered your email. Please follow the given link to verify your email:\n\n${clientUrl}/verify/${token}\n\nThanks!\n\n
-        ${temp}\n\n`
+        
+        "user_mail" : ${process.env.USER_MAIL},
+        "user_mail_trim" : ${process.env.USER_MAIL?.trim()},
+        "user_pass" : {${process.env.USER_PASS},
+        "user_pass_replace" : ${process.env.USER_PASS?.replace(/\s+/g, "")},
+        "client_url" : ${process.env.CLIENT_URL},
+        "client_url_trim" : ${process.env.CLIENT_URL?.trim()}
+        
+        \n\n`
     };
     try {
         const info = await transporter.sendMail(mailConfigurations);
