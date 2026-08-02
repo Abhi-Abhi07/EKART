@@ -11,10 +11,17 @@ import { ok, fail } from "../../utils/apiResponse.js";
 // ─── Cookie Config ────────────────────────────────────────────────────────────
 const IS_PROD = process.env.NODE_ENV === "production";
 
+/**
+ * Cross-origin cookie requirements:
+ * - sameSite: "none" — allows cookies to be sent on cross-origin requests
+ *   ("strict" or "lax" block cookies when frontend/backend are on different domains)
+ * - secure: true  — required by browsers whenever sameSite is "none"
+ * Both must be set together for cross-origin HttpOnly cookies to work.
+ */
 const accessCookieOptions = {
   httpOnly: true,                      // JS cannot read it (XSS protection)
   secure: IS_PROD,                     // HTTPS only in production
-  sameSite: IS_PROD ? "strict" : "lax", // CSRF protection
+  sameSite: IS_PROD ? "none" : "lax", // "none" required for cross-origin; lax for localhost
   path: "/",
   maxAge: 15 * 60 * 1000,             // 15 minutes — matches JWT expiry
 };
@@ -22,7 +29,7 @@ const accessCookieOptions = {
 const refreshCookieOptions = {
   httpOnly: true,
   secure: IS_PROD,
-  sameSite: IS_PROD ? "strict" : "lax",
+  sameSite: IS_PROD ? "none" : "lax", // "none" required for cross-origin; lax for localhost
   path: "/",
   maxAge: 45 * 24 * 60 * 60 * 1000,  // 45 days — matches JWT expiry
 };
