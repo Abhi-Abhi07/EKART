@@ -18,24 +18,15 @@ function ShowUserOrders() {
 
   useEffect(() => {
     const fetchUserOrders = async () => {
-      const accessToken = localStorage.getItem("accessToken");
-
       try {
         setLoading(true);
         const res = await apiClient.get(
-          `/api/v1/orders/user-order/${params.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
+          `/api/v1/orders/user-order/${params.userId}`
         );
-
         if (res.data.success) {
           setUserOrder(res.data.orders);
         }
       } catch (error) {
-        console.log(error);
         toast.error("Failed to load user orders");
       } finally {
         setLoading(false);

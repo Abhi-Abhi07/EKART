@@ -54,7 +54,6 @@ function AddressForm() {
   //   console.log(cart)
 
   const handlePayment = async () => {
-    const accessToken = localStorage.getItem("accessToken");
     try {
       const { data } = await apiClient.post(
         `/api/v1/orders/create-order`,
@@ -67,11 +66,6 @@ function AddressForm() {
           shipping,
           amount: total,
           currency: "INR",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
         },
       );
 
@@ -93,11 +87,6 @@ function AddressForm() {
             const verifyRes = await apiClient.post(
               `/api/v1/orders/verify-payment`,
               response,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              },
             );
 
             if (verifyRes.data.success) {
@@ -121,11 +110,6 @@ function AddressForm() {
                 {
                   razorpay_order_id: data.order.id,
                   paymentFailed: true,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                  },
                 },
               );
             } catch (error) {
@@ -152,11 +136,6 @@ function AddressForm() {
             {
               razorpay_order_id: data.order.id,
               paymentFailed: true,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
             },
           );
         } catch (error) {

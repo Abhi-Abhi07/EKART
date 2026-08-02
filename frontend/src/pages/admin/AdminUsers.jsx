@@ -22,19 +22,13 @@ function AdminUsers() {
   const navigate = useNavigate()
 
   const getAllUsers = async() =>{
-    const accessToken = localStorage.getItem("accessToken")
     try {
       setLoading(true)
-      const res = await apiClient.get(`/api/v1/user/all-user`,{
-        headers:{
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await apiClient.get(`/api/v1/user/all`)
       if(res.data.success){
         setUsers(res.data.users)
       }
     } catch (error) {
-      console.log(error)
       toast.error("Failed to load users")
     } finally {
       setLoading(false)

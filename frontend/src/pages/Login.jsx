@@ -16,43 +16,42 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { apiClient } from "@/services/apiClient";
+import { authService } from "@/services/authService";
 
 function Login() {
-    const [showPassword,setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        email:"",
-        password:"",
+        email: "",
+        password: "",
     })
     const dispatch = useDispatch();
-    const handleChange = (e)=>{
-        const {name,value} = e.target;
-        setFormData((pre)=>({
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((pre) => ({
             ...pre,
-            [name]:value
+            [name]: value
         }))
     }
-    const submitHandler  = async(e)=>{
+    const submitHandler = async (e) => {
         e.preventDefault();
-        // console.log(formData);
         setLoading(true);
-        try{
-            const res = await apiClient.post(`/api/v1/user/login`,formData)
-            if(res.data.success){
-                navigate("/");
-                dispatch(setUser(res.data.user))
-                localStorage.setItem("accessToken",res.data.accessToken);
+        try {
+            const res = await authService.login(formData);
+            if (res.data.success) {
+                // Tokens are set as HttpOnly cookies by the server — no localStorage needed
+                dispatch(setUser(res.data.user));
                 toast.success(res.data.message);
+                navigate("/");
             }
-        }catch(error){
-            console.log(error);
-            toast.error(error.response.data.message);
-        }finally{
+        } catch (error) {
+            // Show first field-level Zod error if available, otherwise the top-level message
+            const firstFieldError = error?.response?.data?.errors?.[0]?.message;
+            toast.error(firstFieldError || error?.response?.data?.message || "Login failed. Please try again.");
+        } finally {
             setLoading(false);
         }
-        
     }
     return (
         <div className='flex justify-center items-center min-h-screen bg-background'>
@@ -64,45 +63,45 @@ function Login() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                        <div className="flex flex-col gap-3">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder="m@example.com"
-                                    required
-                                    value={formData.email}
-                                        onChange={handleChange}
-                                />
+                    <div className="flex flex-col gap-3">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="m@example.com"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password">Password</Label>
                             </div>
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                </div>
-                                <div className="relative ">
-                                    <Input 
-                                        id="password" 
-                                        name="password"
-                                        placeholder="Enter password"
-                                        type = {showPassword ? "text" : "password"}
-                                        required 
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                    />
-                                    {
-                                        showPassword ? 
-                                        <EyeOff onClick={()=>setShowPassword(false)} className="w-5 h-5 text-gray-700 absolute right-5 bottom-2"/> : 
-                                        <Eye onClick={()=>setShowPassword(true)} className="w-5 h-5 text-gray-700 absolute right-5 bottom-2"/>
-                                    }
-                                </div>
+                            <div className="relative ">
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter password"
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                />
+                                {
+                                    showPassword ?
+                                        <EyeOff onClick={() => setShowPassword(false)} className="w-5 h-5 text-gray-700 absolute right-5 bottom-2" /> :
+                                        <Eye onClick={() => setShowPassword(true)} className="w-5 h-5 text-gray-700 absolute right-5 bottom-2" />
+                                }
                             </div>
                         </div>
+                    </div>
                 </CardContent>
                 <CardFooter className="flex-col gap-2">
                     <Button onClick={submitHandler} type="submit" className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground cursor-pointer">
-                        {loading ? <> <Loader2 className="w-4 h-4 animate-spin mr-2"/> Please wait </>: "Login"}
+                        {loading ? <> <Loader2 className="w-4 h-4 animate-spin mr-2" /> Please wait </> : "Login"}
                     </Button>
                     <p className="text-gray-700">Don't have an account? <Link to={"/signup"} className="hover:underline cursor-pointer text-blue-800">Signup</Link></p>
                 </CardFooter>

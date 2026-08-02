@@ -47,7 +47,6 @@ import { apiClient } from "@/services/apiClient";
 function AdminProduct() {
   const { products } = useSelector((store) => store.product);
   const [editProduct, setEditProduct] = useState(null);
-  const accessToken = localStorage.getItem("accessToken");
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -98,11 +97,7 @@ function AdminProduct() {
       const res = await apiClient.put(
         `/api/v1/product/update/${editProduct._id}`,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       if (res.data.success) {
         const updateProducts = products.map((p) =>
@@ -127,11 +122,6 @@ function AdminProduct() {
       );
       const res = await apiClient.delete(
         `/api/v1/product/delete/${productId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
       );
       if (res.data.success) {
         dispatch(setProducts(remainingProducts));

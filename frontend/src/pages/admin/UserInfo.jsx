@@ -43,28 +43,26 @@ function UserInfo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const accessToken = localStorage.getItem("accessToken")
 
     try {
       const formData = new FormData();
       formData.append("firstName", updateUser.firstName)
       formData.append("lastName", updateUser.lastName)
-      formData.append("email", updateUser.email)
       formData.append("phoneNo", updateUser.phoneNo)
-      formData.append("address", updateUser.address)
-      formData.append("city", updateUser.city)
-      formData.append("zipCode", updateUser.zipCode)
-      formData.append("role", updateUser.role)
+      formData.append("street",  updateUser.street  || updateUser.address || "")
+      formData.append("city",    updateUser.city    || "")
+      formData.append("state",   updateUser.state   || "")
+      formData.append("zipCode", updateUser.zipCode || "")
+      formData.append("country", updateUser.country || "India")
+      formData.append("role",    updateUser.role)
 
       if (file) {
         formData.append("file", file)
       }
 
-      const res = await apiClient.put(`/api/v1/user/update/${userId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data"
-        }
+      // Cookie auto-sent — no manual Authorization header needed
+      const res = await apiClient.put(`/api/v1/user/${userId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       })
 
       if (res.data.success) {
@@ -75,7 +73,6 @@ function UserInfo() {
       }
 
     } catch (error) {
-      console.log(error);
       toast.error("Failed to update profile")
     } finally {
       setLoading(false);
@@ -85,13 +82,13 @@ function UserInfo() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await apiClient.get(`/api/v1/user/get-user/${userId}`)
+        const res = await apiClient.get(`/api/v1/user/${userId}`)
         if (res.data.success) {
           setUpdateUser(res.data.user)
         }
       } catch (error) {
-        console.log(error)
-        toast.error("Failed to load user details")
+        console.error(error)
+        toast.error(error?.response?.data?.message || "Failed to load user details")
       }
     }
 

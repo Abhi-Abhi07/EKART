@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,13 +12,14 @@ import {
   ChevronDown,
   LogOut,
   UserCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ThemeToggle from "@/components/ThemeToggle";
 import PageTransition from "@/components/PageTransition";
-import { setUser } from "@/redux/userSlice";
+import { clearUser } from "@/redux/userSlice";
 import { toast } from "sonner";
 
 const navItems = [
@@ -76,8 +77,7 @@ const AdminLayout = () => {
   const pageTitle = getPageTitle(location.pathname);
 
   const logoutHandler = () => {
-    dispatch(setUser(null));
-    localStorage.removeItem("accessToken");
+    dispatch(clearUser());
     toast.success("Signed out successfully");
     navigate("/");
   };
@@ -101,22 +101,21 @@ const AdminLayout = () => {
                 item.icon === "dashboard"
                   ? LayoutDashboard
                   : item.icon === "package"
-                  ? Package
-                  : item.icon === "package-plus"
-                  ? PackagePlus
-                  : item.icon === "shopping-bag"
-                  ? ShoppingBag
-                  : Users;
+                    ? Package
+                    : item.icon === "package-plus"
+                      ? PackagePlus
+                      : item.icon === "shopping-bag"
+                        ? ShoppingBag
+                        : Users;
               return (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition ${
-                      isActive
-                        ? "border-l-4 border-primary bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    `flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition ${isActive
+                      ? "border-l-4 border-primary bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`
                   }
                 >
@@ -125,6 +124,14 @@ const AdminLayout = () => {
                 </NavLink>
               );
             })}
+            <NavLink
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Store</span>
+            </NavLink>
           </nav>
         </DialogContent>
       </Dialog>
@@ -142,21 +149,20 @@ const AdminLayout = () => {
                 item.icon === "dashboard"
                   ? LayoutDashboard
                   : item.icon === "package"
-                  ? Package
-                  : item.icon === "package-plus"
-                  ? PackagePlus
-                  : item.icon === "shopping-bag"
-                  ? ShoppingBag
-                  : Users;
+                    ? Package
+                    : item.icon === "package-plus"
+                      ? PackagePlus
+                      : item.icon === "shopping-bag"
+                        ? ShoppingBag
+                        : Users;
               return (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition ${
-                      isActive
-                        ? "border-l-4 border-primary bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    `flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition ${isActive
+                      ? "border-l-4 border-primary bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`
                   }
                 >
@@ -165,6 +171,13 @@ const AdminLayout = () => {
                 </NavLink>
               );
             })}
+            <NavLink
+              to="/"
+              className="flex items-center gap-3 rounded-3xl px-4 py-3 text-sm font-semibold transition text-muted-foreground hover:bg-muted hover:text-foreground mt-4"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Store</span>
+            </NavLink>
           </nav>
         </aside>
 

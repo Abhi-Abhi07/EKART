@@ -1,30 +1,23 @@
-// User and authentication route definitions.
+// User profile and admin management routes.
 
 import express from "express";
-import { allUser, changePassword, forgotPassword, getUserById, login, logout, register, reVerify, updateUser, verify, verifyOTP } from "../controllers/userController.js";
-import { isAdmin, isAuthenticated } from "../middleware/isAuthenticated.js";
+import { getMyProfile, allUser, getUserById, updateUser } from "../controllers/user/userController.js";
+import { isAuthenticated, isAdmin } from "../middleware/isAuthenticated.js";
 import { singleUpload } from "../middleware/multer.js";
 import { validate } from "../middleware/validate.js";
-import {
-  changePasswordSchema,
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  verifyOtpSchema,
-} from "../validations/userValidation.js";
+import { updateUserSchema } from "../validations/userValidation.js";
 
 const router = express.Router();
 
-router.post("/register", validate({ body: registerSchema }), register);
-router.post("/verify",verify);
-router.post("/reVerify",reVerify);
-router.post("/login", validate({ body: loginSchema }), login);
-router.post("/logout",isAuthenticated,logout);
-router.post("/forgot-password", validate({ body: forgotPasswordSchema }), forgotPassword);
-router.post("/verify-otp/:email", validate({ body: verifyOtpSchema }), verifyOTP);
-router.post("/change-password/:email", validate({ body: changePasswordSchema }), changePassword);
-router.get("/all-user",isAuthenticated,isAdmin,allUser)
-router.get("/get-user/:userId",getUserById)
-router.put("/update/:id",isAuthenticated,singleUpload,updateUser)
+// All user routes require authentication
+router.use(isAuthenticated);
 
-export default router
+// ─── Own Profile ──────────────────────────────────────────────────────────────
+router.get("/profile", getMyProfile);
+router.put("/:id", singleUpload, validate({ body: updateUserSchema }), updateUser);
+
+// ─── Admin Only ───────────────────────────────────────────────────────────────
+router.get("/all",       isAdmin, allUser);
+router.get("/:userId",   isAdmin, getUserById);
+
+export default router;

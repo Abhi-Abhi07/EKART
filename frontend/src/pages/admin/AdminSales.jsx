@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import PageTransition from '@/components/PageTransition'
-import React, { useState,useEffect } from 'react'
-import { Area, ResponsiveContainer,AreaChart, Tooltip, XAxis, YAxis } from 'recharts'
+import React, { useState, useEffect } from 'react'
+import { Area, ResponsiveContainer, AreaChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { apiClient } from '@/services/apiClient'
@@ -21,16 +21,11 @@ function AdminSales() {
   })
   const [loading, setLoading] = useState(true)
 
-  const fetchStats = async()=>{
+  const fetchStats = async () => {
     try {
       setLoading(true)
-      const accessToken = localStorage.getItem("accessToken")
-      const res = await apiClient.get(`/api/v1/orders/sales`,{
-        headers:{
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
-      if(res.data.success){
+      const res = await apiClient.get(`/api/v1/orders/sales`)
+      if (res.data.success) {
         const { totalUsers, totalProducts, totalOrders, totalSales, salesByDate } = res.data
         setStats({
           totalUsers,
@@ -48,16 +43,16 @@ function AdminSales() {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchStats()
-  },[])
+  }, [])
 
-  if(loading) {
+  if (loading) {
     return (
       <div className='bg-background min-h-screen p-6'>
         <PageTransition>
           <div className='grid gap-4 lg:grid-cols-4'>
-            {Array.from({length: 4}).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-24" />
             ))}
             <Skeleton className="h-80 lg:col-span-4" />
@@ -116,13 +111,13 @@ function AdminSales() {
                 <CardTitle className='text-foreground'>Sales Last 30 Days</CardTitle>
               </CardHeader>
               <CardContent>
-                <div style={{height:300}}>
+                <div style={{ height: 300 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={stats.salesByDate}>
                       <XAxis dataKey="date" stroke="currentColor" className="text-muted-foreground" />
                       <YAxis stroke="currentColor" className="text-muted-foreground" />
                       <Tooltip contentStyle={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }} />
-                      <Area type="monotone" dataKey="amount" stroke="hsl(var(--primary))" fill='hsl(var(--primary))' fillOpacity={0.1}/>
+                      <Area type="monotone" dataKey="amount" stroke="hsl(var(--primary))" fill='hsl(var(--primary))' fillOpacity={0.1} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>

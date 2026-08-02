@@ -6,8 +6,8 @@ import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "@/redux/userSlice";
-import { apiClient } from "@/services/apiClient";
+import { clearUser } from "@/redux/userSlice";
+import { authService } from "@/services/authService";
 import ThemeToggle from "@/components/ThemeToggle";
 
 /**
@@ -25,15 +25,15 @@ function Navbar() {
 
   const logoutHandler = async () => {
     try {
-      const res = await apiClient.post("/api/v1/user/logout", {});
+      const res = await authService.logout();
       if (res.data.success) {
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Token expired, logged out locally");
+      toast.error(error?.response?.data?.message || "Logged out locally.");
     } finally {
-      dispatch(setUser(null));
-      localStorage.removeItem("accessToken");
+      // clearUser clears Redux state; server already cleared the HttpOnly cookies
+      dispatch(clearUser());
       navigate("/login");
       setIsMobileOpen(false);
     }

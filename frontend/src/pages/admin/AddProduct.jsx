@@ -18,7 +18,6 @@ import { toast } from 'sonner'
  * @returns {JSX.Element} The AddProduct component
  */
 function AddProduct() {
-  const accessToken = localStorage.getItem("accessToken")
   const dispatch = useDispatch()
   const {products} = useSelector((store)=>store.product)
   const [loading,setLoading] = useState(false)
@@ -59,9 +58,7 @@ function AddProduct() {
     try {
       setLoading(true)
       const res = await apiClient.post(`/api/v1/product/add`, formData, {
-        headers:{
-          Authorization: `Bearer ${accessToken}`
-        }
+        headers: { "Content-Type": "multipart/form-data" },
       })
       if(res.data.success){
         dispatch(setProducts([...products,res.data.product]))
@@ -76,7 +73,6 @@ function AddProduct() {
         })
       }
     } catch (error) {
-      console.log(error)
       toast.error("Failed to add product")
     }finally{
       setLoading(false);
