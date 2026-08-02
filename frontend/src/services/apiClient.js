@@ -6,15 +6,18 @@ import { clearUser } from "../redux/userSlice";
 
 /**
  * Axios instance with unified base URL.
- * In production: baseURL is "/" so all API calls go to the same origin
- * (ekart-psi-lilac.vercel.app/api/...) and Vercel rewrites proxy them to
- * the backend. This avoids cross-origin cookie blocking in modern browsers.
- * In local dev: points directly to localhost:8000 backend.
- * `withCredentials: true` sends HttpOnly cookies automatically.
+ *
+ * Uses Vite's built-in DEV flag (not an env variable) so no Vercel
+ * dashboard setting can accidentally override this behaviour:
+ *
+ * - DEV build  (localhost)   → hit backend directly at :8000
+ * - PROD build (Vercel)      → empty baseURL = same-origin requests
+ *   Vercel rewrites /api/*   → ekart-backend-eight.vercel.app/api/*
+ *   Cookie is same-origin → no cross-domain blocking ✅
  */
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_URL || "/",
-  withCredentials: true, // Required for HttpOnly cookies to be sent cross-origin
+  baseURL: import.meta.env.DEV ? "http://localhost:8000" : "",
+  withCredentials: true,
 });
 
 /**
