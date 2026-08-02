@@ -6,11 +6,14 @@ import { clearUser } from "../redux/userSlice";
 
 /**
  * Axios instance with unified base URL.
- * `withCredentials: true` automatically sends HttpOnly cookies on every request.
- * No manual token management needed — cookies are browser-managed.
+ * In production: baseURL is "/" so all API calls go to the same origin
+ * (ekart-psi-lilac.vercel.app/api/...) and Vercel rewrites proxy them to
+ * the backend. This avoids cross-origin cookie blocking in modern browsers.
+ * In local dev: points directly to localhost:8000 backend.
+ * `withCredentials: true` sends HttpOnly cookies automatically.
  */
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_URL || "http://localhost:8000",
+  baseURL: import.meta.env.VITE_URL || "/",
   withCredentials: true, // Required for HttpOnly cookies to be sent cross-origin
 });
 
