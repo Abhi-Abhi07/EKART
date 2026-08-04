@@ -21,6 +21,12 @@ export const authService = {
   logout: () => apiClient.post("/api/v1/auth/logout"),
 
   /**
+   * Refresh expired access token using the HttpOnly refresh cookie.
+   * Called automatically by the Axios response interceptor — not meant for direct use.
+   */
+  refreshToken: () => apiClient.post("/api/v1/auth/refresh"),
+
+  /**
    * Verify email using the token from the verification link.
    * @param {string} token - JWT from the email link
    */

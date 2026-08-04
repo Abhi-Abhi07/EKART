@@ -1,5 +1,6 @@
-// Authentication controller: register, login, logout, verify email, re-send verification.
+// Authentication controller: register, login, logout, verify email, re-send verification, token refresh.
 
+import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -196,9 +197,17 @@ export const login = async (req, res) => {
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "45d" }
     );
 
-    // Replace existing session
+    // Replace existing sessions and store refresh token hash for validation
     await Session.deleteMany({ userId: user._id });
-    await Session.create({ userId: user._id });
+    const refreshTokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+    await Session.create({
+      userId: user._id,
+      refreshTokenHash,
+      expiresAt: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days
+    });
 
     // Set tokens as HttpOnly cookies — never exposed to JS
     res.cookie("accessToken", accessToken, accessCookieOptions);
@@ -225,6 +234,106 @@ export const logout = async (req, res) => {
     res.clearCookie("refreshToken", { path: "/" });
 
     return res.status(200).json(ok("Logged out successfully."));
+  } catch (error) {
+    return res.status(500).json(fail(error.message));
+  }
+};
+
+// ─── Refresh Access Token ─────────────────────────────────────────────────────
+// Called automatically by the frontend interceptor when the access token expires.
+// Validates the refresh token cookie, checks the session, rotates both tokens.
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const token = req.cookies?.refreshToken;
+    if (!token) {
+      return res.status(401).json(fail("Refresh token missing. Please log in."));
+    }
+
+    // ── Verify JWT signature and expiry ─────────────────────────────────────
+    let decoded;
+    try {
+      decoded = jwt.verify(
+        token,
+        process.env.REFRESH_TOKEN_SECRET || process.env.SECRET_KEY
+      );
+    } catch (err) {
+      // Clear stale cookies on any verification failure
+      res.clearCookie("accessToken", { path: "/" });
+      res.clearCookie("refreshToken", { path: "/" });
+
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json(fail("Session expired. Please log in again."));
+      }
+      return res.status(401).json(fail("Invalid refresh token. Please log in."));
+    }
+
+    // ── Validate user still exists and password hasn't changed ──────────────
+    const user = await User.findById(decoded.id).select("+passwordChangedAt");
+    if (!user) {
+      res.clearCookie("accessToken", { path: "/" });
+      res.clearCookie("refreshToken", { path: "/" });
+      return res.status(401).json(fail("User no longer exists."));
+    }
+
+    if (user.changedPasswordAfter(decoded.iat)) {
+      res.clearCookie("accessToken", { path: "/" });
+      res.clearCookie("refreshToken", { path: "/" });
+      await Session.deleteMany({ userId: user._id });
+      return res.status(401).json(
+        fail("Password was recently changed. Please log in again.")
+      );
+    }
+
+    // ── Validate session exists and refresh token hash matches ──────────────
+    const incomingHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const session = await Session.findOne({
+      userId: user._id,
+      refreshTokenHash: incomingHash,
+    });
+
+    if (!session) {
+      // Possible token theft — invalidate all sessions for this user
+      await Session.deleteMany({ userId: user._id });
+      res.clearCookie("accessToken", { path: "/" });
+      res.clearCookie("refreshToken", { path: "/" });
+      return res.status(401).json(
+        fail("Session revoked. Please log in again.")
+      );
+    }
+
+    // ── Rotate: issue new access token + new refresh token ──────────────────
+    const newAccessToken = jwt.sign(
+      { id: user._id },
+      process.env.SECRET_KEY,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "15m" }
+    );
+    const newRefreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_TOKEN_SECRET || process.env.SECRET_KEY,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "45d" }
+    );
+
+    // Update session with the new refresh token hash
+    const newRefreshTokenHash = crypto
+      .createHash("sha256")
+      .update(newRefreshToken)
+      .digest("hex");
+    session.refreshTokenHash = newRefreshTokenHash;
+    session.expiresAt = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000);
+    await session.save();
+
+    // Set new cookies
+    res.cookie("accessToken", newAccessToken, accessCookieOptions);
+    res.cookie("refreshToken", newRefreshToken, refreshCookieOptions);
+
+    // Return user so frontend can update Redux state
+    return res.status(200).json(
+      ok("Token refreshed successfully.", { user })
+    );
   } catch (error) {
     return res.status(500).json(fail(error.message));
   }

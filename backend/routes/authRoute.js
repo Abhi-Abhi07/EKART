@@ -1,9 +1,9 @@
-// Authentication routes: register, login, logout, email verification, password recovery.
+// Authentication routes: register, login, logout, email verification, password recovery, token refresh.
 
 import express from "express";
 import rateLimit from "express-rate-limit";
 
-import { register, login, logout, verify, reVerify } from "../controllers/auth/authController.js";
+import { register, login, logout, verify, reVerify, refreshAccessToken } from "../controllers/auth/authController.js";
 import { forgotPassword, verifyOTP, changePassword } from "../controllers/auth/passwordController.js";
 import { isAuthenticated } from "../middleware/isAuthenticated.js";
 import { validate } from "../middleware/validate.js";
@@ -32,9 +32,10 @@ router.post("/register", authLimiter, validate({ body: registerSchema }), regist
 router.post("/verify",   authLimiter, verify);
 router.post("/re-verify", authLimiter, reVerify);
 
-// ─── Login / Logout ───────────────────────────────────────────────────────────
-router.post("/login",  authLimiter, validate({ body: loginSchema }), login);
-router.post("/logout", isAuthenticated, logout);
+// ─── Login / Logout / Token Refresh ───────────────────────────────────────────
+router.post("/login",   authLimiter, validate({ body: loginSchema }), login);
+router.post("/logout",  isAuthenticated, logout);
+router.post("/refresh", authLimiter, refreshAccessToken);
 
 // ─── Password Recovery ────────────────────────────────────────────────────────
 router.post("/forgot-password",          authLimiter, validate({ body: forgotPasswordSchema }), forgotPassword);
